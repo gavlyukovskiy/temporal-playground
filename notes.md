@@ -15,6 +15,11 @@ After starting a worker it cannot connect to the cluster with the error
 io.grpc.StatusRuntimeException: UNAVAILABLE: Not enough hosts to serve the request
 ```
 
+Same is in docker logs
+```json
+{"level":"error","ts":"2024-10-09T22:06:55.809Z","msg":"Unable to call matching.PollActivityTaskQueue.","service":"frontend","wf-task-queue-name":"/_sys/JsonMaskingWorkflow/2","timeout":"1m9.999500167s","error":"Not enough hosts to serve the request","logging-call-at":"/home/runner/work/docker-builds/docker-builds/temporal/service/frontend/workflow_handler.go:1094",...
+```
+
 Submitting the workflow worked, but going inside the workflow gives 503 error.
 
 ### Module structure
