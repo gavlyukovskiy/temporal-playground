@@ -8,6 +8,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/temporal-client" />
+            <option value="$PROJECT_DIR$/temporal-foo-jobs" />
           </set>
         </option>
       </GradleProjectSettings>
