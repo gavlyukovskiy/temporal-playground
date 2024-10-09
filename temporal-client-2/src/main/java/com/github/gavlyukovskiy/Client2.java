@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
-public class Main {
+public class Client2 {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -20,12 +20,6 @@ public class Main {
         WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
         // client that can be used to start and signal workflows
         WorkflowClient client = WorkflowClient.newInstance(service);
-        JsonMaskingWorkflow workflow = client.newWorkflowStub(
-                JsonMaskingWorkflow.class,
-                WorkflowOptions.newBuilder()
-                        .setTaskQueue(JsonMaskingWorkflow.TASK_QUEUE)
-                        .build()
-        );
 
         String json = """
                       {
@@ -34,17 +28,28 @@ public class Main {
                       }
                       """;
 
+        JsonMaskingWorkflow syncWorkflow = createWorkflow(client);
         logger.info("(sync) Executing JsonMaskingWorkflow");
-        // This is going to block until the workflow completes.
+        // This is going to block until the syncWorkflow completes.
         // This is rarely used in production. Use the commented code below for async start version.
-        String masked = workflow.maskJson(json);
+        String masked = syncWorkflow.maskJson(json);
         logger.info("(sync) JsonMaskingWorkflow completed: %s".formatted(masked));
 
+        JsonMaskingWorkflow asyncWorkflow = createWorkflow(client);
         logger.info("(async) Executing JsonMaskingWorkflow");
-        WorkflowExecution workflowExecution = WorkflowClient.start(workflow::maskJson, json);
+        WorkflowExecution workflowExecution = WorkflowClient.start(asyncWorkflow::maskJson, json);
         logger.info("Started JsonMaskingWorkflow with workflowId='%s' and runId='%s'".formatted(
                 workflowExecution.getWorkflowId(),
                 workflowExecution.getRunId()
         ));
+    }
+
+    private static JsonMaskingWorkflow createWorkflow(WorkflowClient client) {
+        return client.newWorkflowStub(
+                JsonMaskingWorkflow.class,
+                WorkflowOptions.newBuilder()
+                        .setTaskQueue(JsonMaskingWorkflow.TASK_QUEUE)
+                        .build()
+        );
     }
 }

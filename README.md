@@ -16,8 +16,9 @@ When something is misconfigured we get a Go stacktrace without much indication a
 A lot of docker composes are available (https://github.com/temporalio/docker-compose). 
 However while simplified setup (`auto-setup`) seems to work fine, setting up multi-role with multiple workers is quite cumbersome. 
 
-### Worker polling problem
+### Worker
 
+#### Polling issue
 After starting a worker it cannot connect to the cluster with the error
 ```text
 23:51:27.129 [Workflow Poller taskQueue="JsonMaskingWorkflow", namespace="default": 2] WARN  io.temporal.internal.worker.Poller - Failure in poller thread Workflow Poller taskQueue="JsonMaskingWorkflow", namespace="default": 2
@@ -33,7 +34,7 @@ Submitting the workflow worked, but going inside the workflow gives 503 error.
 
 Turns out to be the problem of misconfigured database (`DB=postgresql`).
 
-### Activity reporting problem
+#### Activity reporting issue
 
 After finishing a workflow got this error on the worker
 ```text
@@ -41,7 +42,29 @@ After finishing a workflow got this error on the worker
 io.grpc.StatusRuntimeException: NOT_FOUND: invalid activityID or activity already timed out or invoking workflow is completed
 ```
 
-client never received an update.
+client never received an update. Was due to misconfigured timeout on the client.
+
+#### Some other polling issue?
+
+Started getting these errors on the worker
+```text
+00:20:47.872 [Workflow Poller taskQueue="JsonMaskingWorkflow", namespace="default": 1] WARN  io.temporal.internal.worker.Poller - Failure in poller thread Workflow Poller taskQueue="JsonMaskingWorkflow", namespace="default": 1
+io.grpc.StatusRuntimeException: UNKNOWN: HTTP status code 204
+```
+Reason not very clear. UI doesn't show any problems.
+
+### Client
+
+#### Misconfigured timeouts
+
+When the timeout is misconfigured on the workflow just waits for the response indefinitely
+
+#### Workflow instances cannot be reused
+
+Workflow instances cannot be reused:
+```text
+Exception in thread "main" java.lang.IllegalStateException: Cannot reuse a stub instance to start more than one workflow execution. The stub points to already started execution. If you are trying to wait for a workflow completion either change WorkflowIdReusePolicy from AllowDuplicate or use WorkflowStub.getResult
+```
 
 ### Module structure
 

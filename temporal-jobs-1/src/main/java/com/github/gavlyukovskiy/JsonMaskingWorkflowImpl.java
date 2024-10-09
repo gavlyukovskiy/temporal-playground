@@ -46,13 +46,13 @@ public class JsonMaskingWorkflowImpl implements JsonMaskingWorkflow {
                 // used like in this sample.
                 // Note that scheduleToStart timeout is not retryable and retry options will ignore it.
                 // This timeout has to be handled by Workflow code.
-                .setScheduleToStartTimeout(Duration.ofSeconds(10))
+                .setScheduleToStartTimeout(Duration.ofSeconds(30))
                 // Set the max time of a single activity execution attempt.
                 // Activity is going to be executed by a Worker listening to the specified
                 // host task queue. If the activity is started but then the activity worker crashes
                 // for some reason, we want to make sure that it is retried after the specified timeout.
                 // This timeout should be as short as the longest possible execution of the Activity.
-                .setStartToCloseTimeout(Duration.ofSeconds(2))
+                .setStartToCloseTimeout(Duration.ofSeconds(10))
                 .setRetryOptions(RetryOptions.newBuilder()
                                          .setInitialInterval(Duration.ofSeconds(1))
                                          .setMaximumAttempts(4)
