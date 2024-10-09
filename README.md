@@ -1,3 +1,12 @@
+Start docker compose
+
+```bash
+docker compose up -d
+```
+
+Run workers and client.
+
+## Notes
 ### Configuration
 
 When something is misconfigured we get a Go stacktrace without much indication about what went wrong.
@@ -22,6 +31,18 @@ Same is in docker logs
 
 Submitting the workflow worked, but going inside the workflow gives 503 error.
 
+Turns out to be the problem of misconfigured database (`DB=postgresql`).
+
+### Activity reporting problem
+
+After finishing a workflow got this error on the worker
+```text
+00:11:40.867 [Activity Executor taskQueue="ae7cb9ff-dc2b-430a-8f02-77e56627c429", namespace="default": 1] WARN  io.temporal.internal.worker.ActivityWorker - Failure during reporting of activity result to the server. ActivityId = 7ecdef9e-9a39-35ef-8576-58cfae2183f6, ActivityType = MaskJson, WorkflowId=fb3107ed-9296-4c6e-a6a3-34d4c5c4983f, WorkflowType=JsonMaskingWorkflow, RunId=a069d15b-62d5-4cd8-8303-85900f9bd49c
+io.grpc.StatusRuntimeException: NOT_FOUND: invalid activityID or activity already timed out or invoking workflow is completed
+```
+
+client never received an update.
+
 ### Module structure
 
 Not quite clear what code needs to live where. Potentially the client if fully decouples from the worker, but what exactly needs to be shared between the client and the worker?
@@ -38,4 +59,8 @@ not clear what happens if the worker dies mid execution. Do we need to use persi
 ### Examples
 
 Quite a lot of examples available: https://github.com/temporalio/samples-java
+
+### Data sensitivity
+
+The job inputs / outputs must not contain anything sensitive :)
 
