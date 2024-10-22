@@ -4,7 +4,16 @@ Start docker compose
 docker compose up -d
 ```
 
-Run workers and client.
+Start workers:
+```bash
+./gradlew temporal-file-jobs:run
+./gradlew temporal-masking-jobs:run
+```
+
+Start the client:
+```bash
+ ./gradlew temporal-client:run -q --console=plain
+ ```
 
 ## Notes
 ### Configuration
@@ -73,6 +82,18 @@ Not quite clear what code needs to live where. Potentially the client if fully d
 - workflow implementation
 - activity interfaces
 - activity implementation
+
+Update: Looks like workflow cannot just execute arbitrary activities if they're not registered into the same worker?
+```json
+{
+  "message": "Activity Type \"MaskJson\" is not registered with a worker. Known types are: CreateFile, UploadFile, ProcessFile, DeleteFile, SendNotification",
+  "source": "JavaSDK",
+  "stackTrace": "io.temporal.internal.activity.ActivityTaskHandlerImpl.handle(ActivityTaskHandlerImpl.java:133)\nio.temporal.internal.worker.ActivityWorker$TaskHandlerImpl.handleActivity(ActivityWorker.java:290)\nio.temporal.internal.worker.ActivityWorker$TaskHandlerImpl.handle(ActivityWorker.java:254)\nio.temporal.internal.worker.ActivityWorker$TaskHandlerImpl.handle(ActivityWorker.java:217)\nio.temporal.internal.worker.PollTaskExecutor.lambda$process$0(PollTaskExecutor.java:93)\njava.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)\njava.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)\njava.base/java.lang.Thread.run(Thread.java:1570)\n",
+  "applicationFailureInfo": {
+    "type": "java.lang.IllegalArgumentException"
+  }
+}
+```
 
 ### Specific queues
 

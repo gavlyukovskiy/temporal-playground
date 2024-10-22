@@ -6,6 +6,11 @@
         </Console>
     </Appenders>
     <Loggers>
+        <!-- TODO: annoying warnings:
+        Failure in poller thread Activity Poller taskQueue="JsonMaskingWorkflow", namespace="default": 3
+        io.grpc.StatusRuntimeException: UNKNOWN: HTTP status code 204
+        -->
+        <Logger name="io.temporal.internal.worker.Poller" level="error"/>
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>

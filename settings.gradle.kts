@@ -1,7 +1,8 @@
 rootProject.name = "temporal-playground"
 
 include("common")
-include("temporal-client-1")
-include("temporal-client-2")
-include("temporal-jobs-1")
-include("temporal-jobs-2")
+include("temporal-client")
+include("temporal-masking-jobs")
+include("temporal-masking-jobs-api")
+include("temporal-file-jobs")
+include("temporal-file-jobs-api")
